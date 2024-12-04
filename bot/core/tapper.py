@@ -38,6 +38,8 @@ from bot.utils.functions import card_details, tapHash, generate_taps, task_answe
 
 from ..utils.firstrun import append_line_to_file
 
+upgrade_tap_cards = False
+
 def error_handler(func: Callable):
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
@@ -685,7 +687,7 @@ class Tapper:
 
                         if not filtered_tasks:
                             logger.info("Task Not Found")
-                            return
+                            upgrade_tap_cards = True
 
                         for task in filtered_tasks:
                             task_id = task.get("id")
@@ -725,7 +727,7 @@ class Tapper:
                         await asyncio.sleep(random.randint(1, 5))
                     
                     # Update Tap-Cards
-                    if settings.AUTO_UPGRADE_TAP_CARDS:
+                    if settings.AUTO_UPGRADE_TAP_CARDS or upgrade_tap_cards:
                         logger.info(f"{self.session_name} | Updating Tap-Cards...")
                         upgrades = {
                             "bonusChance": {"level": "jackpot_level", "max_level": settings.JACKPOT_LEVEL},
